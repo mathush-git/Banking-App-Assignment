@@ -1,0 +1,5 @@
+athith	2000.0	Account created with balance: 2000.0
+arun	2000.0	Account created with balance: 2000.0
+abi	2000.0	Account created with balance: 2000.0
+abilash	3000.0	Account created with balance: 3000.0
+ranjith	3000.0	Account created with balance: 3000.0
