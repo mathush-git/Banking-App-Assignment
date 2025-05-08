@@ -2,6 +2,7 @@ import random
 
 is_admin = False
 
+
 # ----- Bank Logins -----
 def login_menu():
     while True:
@@ -31,11 +32,20 @@ def Logins():
     admin_name = "unicom"
     admin_password = "123"
 
-    name = input("Enter your Name: ")
-    password = input("Enter your Password: ")
+    
+    User_name = customer_details_get("user_name")
+    User_password = customer_details_get("user_password")
+
+    name=input("Enter your Name:")
+    password=input("Enter your Password:")
+
     if name == admin_name and password == admin_password:
-        print("Login successful!")
+        print("Admin Login successful!")
         is_admin = True
+        MENU()
+        
+    elif name == User_name  and password == User_password:
+        print("User Login successful!")
         MENU()
     else:
         print("Login failed")
@@ -43,28 +53,39 @@ def Logins():
 # ------ User Details ------
 user_details = {}
 
-def user_details_get():
-    user_name = input("Enter your NAME: ")
-    user_nic = input("Enter your NIC: ")
-    user_address = input("Enter your ADDRESS: ")
-    user_age = input("Enter your AGE: ")
-    user_tp_no = input("Enter your TP-NO: ")
+def customer_details_get():
+    customer_name = input("Enter your NAME: ")
+    customer_nic = input("Enter your NIC: ")
+    customer_address = input("Enter your ADDRESS: ")
+    customer_age = input("Enter your AGE: ")
+    customer_tp_no = input("Enter your TP-NO: ")
+    user_name = input("Enter your User_name: ")
+    user_password = input("Enter your Password: ")
 
-    user_details[user_nic] = {
-        "name": user_name,
-        "address": user_address,
-        "age": user_age,
-        "tp_no": user_tp_no
-    }
-    print("User details stored successfully.")
+    return [customer_name,    customer_nic,    customer_address,    customer_age,    customer_tp_no,    user_name,    user_password]
+
+def create_customer_next_id():
+    try:
+        with open("customers.txt", "r") as customers_file:
+            lines = customers_file.readlines()
+            if lines:
+                last_id = int(lines[-1].split(",")[0][1:])
+            else:
+                last_id = 0
+    except FileNotFoundError:
+        last_id = 0  
+
+    return f"C{last_id + 1:03}"  
 
 # ------ Banking Application ------
 account = {}
 
 # Save account details to file
-def save_accounts(name, intial_balance):
-    with open("account.txt", "a") as file:
-        file.write(f"{name}\t{intial_balance}\tAccount created with balance: {intial_balance}\n")
+def save_accounts(customer_id, customer_info):
+    with open("account.txt", "a") as account_file, open("customers.txt", "a") as customers_file, open("acc_num.txt", "a") as acc_num_file:
+        account_file.write(f"{customer_id},{customer_info[0]},{customer_info[1]},{customer_info[2]},{customer_info[3]},{customer_info[4]}\n")
+        customers_file.write(f"{customer_id},{customer_info[5]},{customer_info[6]}\n")
+        acc_num_file.write(f"{account_number},{customer_id}\n")
 
 def generate_account_number():
     while True:
@@ -74,24 +95,24 @@ def generate_account_number():
 
 # ------ Create Account ------
 def created_account():
-    name = input("Enter your Name: ")
+    customer_info = customer_details_get()
+
     while True:
         try:
-            intial_balance = float(input("Enter your initial balance (must be non-negative): "))
-            if intial_balance < 0:
+            initial_balance = float(input("Enter your initial balance (must be non-negative): "))
+            if initial_balance < 0:
                 raise ValueError
             break
         except ValueError:
             print("Invalid amount. Please enter a non-negative number.")
 
+    customer_id = create_customer_next_id()
     account_number = generate_account_number()
-    account[account_number] = {
-        "name": name,
-        "balance": intial_balance,
-        "transactions": [f"Account created with balance: {intial_balance}"]
-    }
-    save_accounts(name, intial_balance)
-    print(f"Account created successfully. Account number: {account_number}")
+
+    account[account_number] = {"customer_id": customer_id, "balance": initial_balance}
+    save_accounts(customer_id, customer_info)
+
+    print(f"Account created successfully. Account number: {account_number}, Customer ID: {customer_id}")
 
 # ------ Deposit Money ------
 def deposit_money():
@@ -178,12 +199,12 @@ def transactions_history():
 def MENU():
     while True:
         try:
-            print("\n====== USER ACCOUNT MENU ======")
+            print("\n====== BANK ACCOUNT MENU ======")
             print("0. Create Account")
             print("1. Deposit Money")
             print("2. Withdraw Money")
             print("3. Check Balance")
-            print("4. Check Balance")
+            print("4. Transfer Money")
             print("5. Transaction History")
             print("6. Exit")
 

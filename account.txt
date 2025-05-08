@@ -1,5 +1,12 @@
-athith	2000.0	Account created with balance: 2000.0
-arun	2000.0	Account created with balance: 2000.0
-abi	2000.0	Account created with balance: 2000.0
-abilash	3000.0	Account created with balance: 3000.0
-ranjith	3000.0	Account created with balance: 3000.0
+C001,mathu,2005,asdf,20,07705
+C002,mathu,2005,vavuniya,20,0761074016
+C003,sanjay,2000512131415,kandy,25,0772536987
+C004,akil,200512326545,jaffna,23,0778945612
+C005,kadabi,200050002000,kilinochchi,19,0770011002
+C006,harish,200045691239,vavauniya,20,0778965412
+C007,kamal,200050016003,mannar,38,0778596123
+C008,arvish,200052222222,colombo,18,0777000321
+C009,dilshan,200056462121,kalani,20,0770505896
+C010,saru,200520003213,kilinochchi,20,0770589653
+C011,vithushan,200120032002,kallady,35,0778945633
+C012,vijay,123456789123,thirunalveli,25,0774561236
