@@ -24,7 +24,7 @@ def login_menu():
             print("Invalid choice. Please select a number between 1 and 3.")
 
 # ----- Logins -----
-def login(admin=False):
+def login(admin):
     global is_admin
     if admin:
         name = input("Enter Admin Name: ")
@@ -44,6 +44,7 @@ def login(admin=False):
                     _, u_name, u_pass = line.strip().split(",")
                     if name == u_name and password == u_pass:
                         print("User Login successful!")
+                        is_admin = False
                         MENU()
                         return
                 print("User login failed.")
@@ -80,10 +81,10 @@ def generate_account_number():
         if acc_number not in account:
             return acc_number
 
-def save_accounts(customer_id, customer_info):
+def save_accounts(customer_id, customer_info, acc_number):
     with open("account.txt", "a") as account_file, open("customers.txt", "a") as customers_file:
-        account_file.write(f"{customer_id},{customer_info[0]},{customer_info[1]},{customer_info[2]},{customer_info[3]},{customer_info[4]}\n")
-        customers_file.write(f"{customer_id},{customer_info[5]},{customer_info[6]}\n")
+        account_file.write(f"{acc_number},   {customer_id},   {customer_info[0]},   {customer_info[1]},   {customer_info[2]},   {customer_info[3]},   {customer_info[4]}\n")
+        customers_file.write(f"{acc_number},   {customer_id},   {customer_info[5]},   {customer_info[6]}\n")
 
 # ------ Create Account ------
 def created_account():
@@ -107,7 +108,7 @@ def created_account():
         "transactions" == [f"Initial deposit: {initial_balance}"]
     )
 
-    save_accounts(customer_id, customer_info)
+    save_accounts(customer_id, customer_info, account_number)
     print(f"Account created successfully. Account number: {account_number}, Customer ID: {customer_id}")
 
 # ------ Deposit Money ------
@@ -190,7 +191,8 @@ def transactions_history():
 def MENU():
     while True:
         print("\n====== BANK ACCOUNT MENU ======")
-        print("0. Create Account")
+        if is_admin:
+            print("0. Create Account")
         print("1. Deposit Money")
         print("2. Withdraw Money")
         print("3. Check Balance")
