@@ -5,7 +5,7 @@ is_admin = False
 account = {}
 
 # ----- Bank Logins -----
-#test-commit
+
 def login_menu():
     while True:
         print("\n------LOGIN MENU------")
