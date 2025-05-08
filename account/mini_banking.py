@@ -1,4 +1,6 @@
 import random
+import re
+
 
 is_admin = False
 
@@ -51,7 +53,22 @@ def login(admin):
                 print("User login failed.")
         except FileNotFoundError:
             print("No users found. Please contact admin.")
-
+            
+def validate_nic(nic):
+    # If the NIC contains 'x' or 'v', its total length must be 10.
+    if 'x' in nic or 'v' in nic:
+        if len(nic) == 10 and bool(re.match(r'^[0-9]{9}[xv]$', nic)):
+            return True
+        else:
+            print("Invalid NIC")
+            return False
+    # Otherwise, the NIC must have exactly 12 digits.
+    elif len(nic) == 12 and bool(re.match(r'^[0-9]{12}$', nic)):
+        return True
+    else:
+        print("Invalid NIC please Enter correct number")
+        return False
+    
 # ----- Customer Detail Input -----
 def customer_details_get():
     customer_name = input("Enter your NAME: ")
@@ -61,8 +78,10 @@ def customer_details_get():
     customer_tp_no = input("Enter your TP-NO: ")
     user_name = input("Set your User_name: ")
     user_password = input("Set your Password: ")
-
-    return [customer_name, customer_nic, customer_address, customer_age, customer_tp_no, user_name, user_password]
+    nic_validated =  validate_nic(customer_nic)
+    if nic_validated:
+        return [customer_name, customer_nic, customer_address, customer_age, customer_tp_no, user_name, user_password]
+    
 
 def create_customer_next_id():
     try:
