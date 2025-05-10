@@ -1,5 +1,6 @@
 import random
 import re
+import datetime
 
 
 is_admin = False
@@ -115,6 +116,15 @@ def save_accounts(customer_id, customer_info, acc_number):
         account_file.write(f"{acc_number},   {customer_id},   {customer_info[0]},   {customer_info[1]},   {customer_info[2]},   {customer_info[3]},   {customer_info[4]}\n")
         customers_file.write(f"{acc_number},   {customer_id},   {customer_info[5]},   {customer_info[6]}\n")
 
+#------- Save All Account------
+def save_all_accounts():
+    with open("acc_num.txt", "a") as f:
+        for acc_number, acc_data in account.items():
+            customer_id = acc_data["customer_id"]
+            balance = acc_data["balance"]
+            transactions = "|".join(acc_data["transactions"])  
+            f.write(f"{acc_number}, {customer_id}, {balance}, {transactions}\n")
+ 
 # ------ Create Account ------
 def created_account():
     customer_info = customer_details_get()
@@ -138,24 +148,30 @@ def created_account():
     }
 
     save_accounts(customer_id, customer_info, account_number)
+    save_all_accounts()  # <--- Add this line to persist balance & transactions
+
     print(f"Account created successfully. Account number: {account_number}, Customer ID: {customer_id}")
+
 
 #-------Load_Accounts-------
 def load_accounts():
     try:
-        with open("account.txt", "r") as f:  
+        with open("acc_num.txt", "r") as f:
             for line in f:
                 parts = [p.strip() for p in line.strip().split(",")]
-                if len(parts) >= 7:
+                if len(parts) >= 4:
                     acc_number = parts[0]
                     customer_id = parts[1]
+                    balance = float(parts[2])
+                    transactions = parts[3].split("|") if parts[3] else []
                     account[acc_number] = {
                         "customer_id": customer_id,
-                        "balance": 0.0,
-                        "transactions": []
+                        "balance": balance,
+                        "transactions": transactions
                     }
     except FileNotFoundError:
         pass
+
 
 # ------ Deposit Money ------
 def deposit_money():
@@ -167,9 +183,10 @@ def deposit_money():
         amount = float(input("Enter deposit amount: "))
         if amount < 0:
             raise ValueError
+        now = datetime.datetime.now()
         account[acc_num]['balance'] += amount
-        account[acc_num]['transactions'].append(f"Deposited: {amount}")
-
+        account[acc_num]['transactions'].append(f"{now} - Deposited: {amount}")
+        save_all_accounts()
         print("Deposit successful.")
     except ValueError:
         print("Invalid deposit amount.")
@@ -184,8 +201,10 @@ def withdraw_money():
         amount = float(input("Enter withdraw amount: "))
         if amount < 0 or amount > account[acc_num]['balance']:
             raise ValueError
+        now = datetime.datetime.now()
         account[acc_num]['balance'] -= amount
-        account[acc_num]['transactions'].append(f"Withdrew: {amount}")
+        account[acc_num]['transactions'].append(f"{now} - Withdrew: {amount}")
+        save_all_accounts()
         print("Withdrawal successful.")
     except ValueError:
         print("Invalid amount or insufficient funds.")
@@ -220,18 +239,15 @@ def transfer_money():
         if account[sender]['balance'] < amount:
             raise ValueError("Insufficient funds.")
 
-        # Perform transfer
+        now = datetime.datetime.now()
+        
         account[sender]['balance'] -= amount
         account[receiver]['balance'] += amount
 
-        # Record transactions
-        account[sender]['transactions'].append(
-            f"Transferred ${amount:.2f} to {receiver}"
-        )
-        account[receiver]['transactions'].append(
-            f"Received ${amount:.2f} from {sender}"
-        )
-
+        
+        account[sender]['transactions'].append(f"{now} - Transferred ${amount:.2f} to {receiver}")
+        account[receiver]['transactions'].append(f"{now} - Received ${amount:.2f} from {sender}")
+        save_all_accounts()
         print("Transfer successful.")
 
     except ValueError as e:
