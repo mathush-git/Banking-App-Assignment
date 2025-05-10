@@ -1,18 +1,4 @@
-C001,mathu_20,mathu_123
-C002,_mathu_dada,123123
-C003,sanjay_123,123456
-C004,akil001,12369
-C005,.kadabi_kili,147
-C006,harish2005,159
-C007,kamal_01,2001
-C008,arvish001,123654
-C009,dilshan018,2222
-C010,saru007,1236
-C011,vithu_02,4525
-C012,vijay_22,2206
-C013,mathu_dada,0613
-C014,kobi_001,321
-1119,   C015,   nivin_012,   3333
-1089,   C120,   mathu_013,   123123
-6040,   C090,   mathu_013,   456
-3155,   C041,   cute,   456
+9733,   C186,   saru.jr,   4563
+4097,   C734,   sakkara.s,   1236
+7047,   C098,   dinoya.n,   1478
+5465,   C048,   gabaskar.g,   1478

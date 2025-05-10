@@ -39,20 +39,29 @@ def login(admin):
         else:
             print("Admin login failed.")
     else:
-        name = input("Enter your User_name: ")
-        password = input("Enter your Password: ")
+        name = input("Enter your User_name: ").strip()
+        password = input("Enter your Password: ").strip()
+
         try:
             with open("customers.txt", "r") as f:
                 for line in f:
-                    _, u_name, u_pass = line.strip().split(",")
+                    parts = line.strip().split(",")
+                    if len(parts) != 4:
+                        continue  
+                    acc_number, customer_id, u_name, u_pass = [p.strip() for p in parts]
                     if name == u_name and password == u_pass:
                         print("User Login successful!")
                         is_admin = False
-                        MENU()
-                        return
-                print("User login failed.")
+                        load_accounts()
+                        MENU()  
+                        break
+                else:
+                    print("User login failed.")
+
         except FileNotFoundError:
             print("No users found. Please contact admin.")
+
+
             
 def validate_nic(nic):
     # If the NIC contains 'x' or 'v', its total length must be 10.
@@ -76,11 +85,11 @@ def customer_details_get():
     customer_address = input("Enter your ADDRESS: ")
     customer_age = input("Enter your AGE: ")
     customer_tp_no = input("Enter your TP-NO: ")
-    user_name = input("Set your User_name: ")
-    user_password = input("Set your Password: ")
+    u_name = input("Set your User_name: ")
+    u_password = input("Set your Password: ")
     nic_validated =  validate_nic(customer_nic)
     if nic_validated:
-        return [customer_name, customer_nic, customer_address, customer_age, customer_tp_no, user_name, user_password]
+        return [customer_name, customer_nic, customer_address, customer_age, customer_tp_no, u_name, u_password]
     
 
 def create_customer_next_id():
@@ -122,14 +131,31 @@ def created_account():
     customer_id = create_customer_next_id()
     account_number = generate_account_number()
 
-    account[account_number] = (
-        "customer_id" == customer_id,
-        "balance" == initial_balance,
-        "transactions" == [f"Initial deposit: {initial_balance}"]
-    )
+    account[account_number] = {
+        "customer_id" : customer_id,
+        "balance" : initial_balance,
+        "transactions" : [f"Initial deposit: {initial_balance}"]
+    }
 
     save_accounts(customer_id, customer_info, account_number)
     print(f"Account created successfully. Account number: {account_number}, Customer ID: {customer_id}")
+
+#-------Load_Accounts-------
+def load_accounts():
+    try:
+        with open("account.txt", "r") as f:  
+            for line in f:
+                parts = [p.strip() for p in line.strip().split(",")]
+                if len(parts) >= 7:
+                    acc_number = parts[0]
+                    customer_id = parts[1]
+                    account[acc_number] = {
+                        "customer_id": customer_id,
+                        "balance": 0.0,
+                        "transactions": []
+                    }
+    except FileNotFoundError:
+        pass
 
 # ------ Deposit Money ------
 def deposit_money():
@@ -143,6 +169,7 @@ def deposit_money():
             raise ValueError
         account[acc_num]['balance'] += amount
         account[acc_num]['transactions'].append(f"Deposited: {amount}")
+
         print("Deposit successful.")
     except ValueError:
         print("Invalid deposit amount.")
@@ -173,27 +200,40 @@ def check_balance():
 
 # ------ Money Transfer ------
 def transfer_money():
-    sender = input("Enter sender account number: ")
-    receiver = input("Enter receiver account number: ")
+    
+    sender = input("Enter sender account number: ").strip()
+    receiver = input("Enter receiver account number: ").strip()
 
-    if sender not in account or receiver not in account:
-        print("One or both accounts do not exist.")
+    # Check if accounts exist
+    if sender not in account:
+        print("Sender account does not exist.")
+        return
+    if receiver not in account:
+        print("Receiver account does not exist.")
         return
 
     try:
         amount = float(input("Enter amount to transfer: "))
+        
         if amount <= 0:
             raise ValueError("Amount must be positive.")
         if account[sender]['balance'] < amount:
             raise ValueError("Insufficient funds.")
 
+        # Perform transfer
         account[sender]['balance'] -= amount
         account[receiver]['balance'] += amount
 
-        account[sender]['transactions'].append(f"Transferred {amount} to {receiver}")
-        account[receiver]['transactions'].append(f"Received {amount} from {sender}")
+        # Record transactions
+        account[sender]['transactions'].append(
+            f"Transferred ${amount:.2f} to {receiver}"
+        )
+        account[receiver]['transactions'].append(
+            f"Received ${amount:.2f} from {sender}"
+        )
 
         print("Transfer successful.")
+
     except ValueError as e:
         print(f"Error: {e}")
 
@@ -244,4 +284,5 @@ def MENU():
 
 # Start Program
 login_menu()
+
 
