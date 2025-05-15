@@ -87,7 +87,14 @@ def customer_details_get():
     customer_age = input("Enter your AGE: ")
     customer_tp_no = input("Enter your TP-NO: ")
     u_name = input("Set your User_name: ")
-    u_password = input("Set your Password: ")
+    while True:
+        u_password = input("Set your Password: ")
+        if len(u_password) == 6:
+            print("Correct Password")
+            break
+        else:
+            print("ReEnter the pasword")
+            continue
     nic_validated =  validate_nic(customer_nic)
     if nic_validated:
         return [customer_name, customer_nic, customer_address, customer_age, customer_tp_no, u_name, u_password]
@@ -108,8 +115,11 @@ def create_customer_next_id():
 def generate_account_number():
     while True:
         acc_number = str(random.randint(1000, 9999))
-        if acc_number not in account:
-            return acc_number
+        if 1000 <= acc_number <= 9999:
+            if acc_number not in account:
+                return acc_number
+        else:
+            print("create correct acc_number")
 
 def save_accounts(customer_id, customer_info, acc_number):
     with open("account.txt", "a") as account_file, open("customers.txt", "a") as customers_file:
@@ -152,6 +162,18 @@ def created_account():
 
     print(f"Account created successfully. Account number: {account_number}, Customer ID: {customer_id}")
 
+#-------Display Customer List-------
+def display_customer():
+    with open("account.txt", "r") as f:
+        for line in f:
+            parts = line.strip().split(",")
+            if len(parts) != 4:
+                continue  
+            acc_number, customer_id, u_name, u_pass = [p.strip() for p in parts]
+        print((account.txt)[1],[2])
+
+             
+             
 
 #-------Load_Accounts-------
 def load_accounts():
@@ -269,12 +291,13 @@ def MENU():
         print("\n====== BANK ACCOUNT MENU ======")
         if is_admin:
             print("0. Create Account")
-        print("1. Deposit Money")
-        print("2. Withdraw Money")
-        print("3. Check Balance")
-        print("4. Transfer Money")
-        print("5. Transaction History")
-        print("6. Exit")
+            print("1. Display Customer List")
+        print("2. Deposit Money")
+        print("3. Withdraw Money")
+        print("4. Check Balance")
+        print("5. Transfer Money")
+        print("6. Transaction History")
+        print("7. Exit")
 
         choice = input("Enter your Choice (0-6): ")
         if choice == "0":
@@ -282,17 +305,22 @@ def MENU():
                 created_account()
             else:
                 print("Only admin can create accounts.")
-        elif choice == "1":
-            deposit_money()
+        if choice == "1":
+            if is_admin:
+                display_customer()
+            else:
+                print("Only admin can create accounts.")
         elif choice == "2":
-            withdraw_money()
+            deposit_money()
         elif choice == "3":
-            check_balance()
+            withdraw_money()
         elif choice == "4":
-            transfer_money()
+            check_balance()
         elif choice == "5":
-            transactions_history()
+            transfer_money()
         elif choice == "6":
+            transactions_history()
+        elif choice == "7":
             print("Exiting... Thank you! Come again!")
             break
         else:

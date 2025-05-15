@@ -1,3 +1,7 @@
 5253,   C839,   iphone,   100020003000,   kaliforniya,   20,   0777888999
 7328,   C254,   redmi,   198866553526,   srilanka,   60,   0775869321
 7178,   C329,   dhanu,   200413603431,   maskeliya,   21,   0763045796
+7882,   C179,   mathushanth,   200516500889,   vavuniya,   20,   0761074016
+7032,   C883,   dilshan,   200601180613,   vavuniya,   19,   0775869321
+9102,   C033,   balamurugan,   200547896321,   jaffna,   20,   0777652897
+6491,   C103,   saruban,   200574123698,   kilinochchi,   20,   0777182356
